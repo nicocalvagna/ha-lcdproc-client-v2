@@ -52,4 +52,4 @@ screens:
     bar_style: str?
     bar_min: float?
     bar_max: float?
-    scroll: bool?   
+    scroll: bool?
