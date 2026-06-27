@@ -1,0 +1,47 @@
+name: "LCDproc Client V2"
+description: "Modern configurable LCDproc client for Home Assistant"
+version: "0.1.0"
+slug: "lcdproc_client_v2"
+init: false
+arch:
+  - amd64
+  - aarch64
+  - armv7
+  - armhf
+  - i386
+startup: services
+boot: auto
+hassio_api: true
+homeassistant_api: true
+hassio_role: homeassistant
+options:
+  lcdproc_host: "192.168.88.206"
+  lcdproc_port: 13666
+  lcd_width: 16
+  lcd_height: 2
+  rotation_seconds: 5
+  refresh_seconds: 2
+  debug: false
+  screens:
+    - name: "Cisterna"
+      entity: "sensor.nivel_cisterna"
+      decimals: 0
+      progressbar: true
+    - name: "Exterior"
+      entity: "sensor.alfa_clima_outside_temperature"
+      decimals: 2
+      progressbar: false
+schema:
+  lcdproc_host: str
+  lcdproc_port: port
+  lcd_width: int
+  lcd_height: int
+  rotation_seconds: int
+  refresh_seconds: int
+  debug: bool
+  screens:
+    - name: str
+      entity: str
+      decimals: int?
+      unit: str?
+      progressbar: bool?
