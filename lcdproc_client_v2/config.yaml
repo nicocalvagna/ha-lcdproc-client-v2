@@ -51,4 +51,5 @@ schema:
       progressbar: bool?
       scroll: bool?
       bar_style: str?
-
+      bar_min: float?
+      bar_max: float?

@@ -60,24 +60,46 @@ def extract_number(value_text):
     except Exception:
         return None
 
-def progress_bar(value_text, width, style="bar"):
+def scaled_percent(value_text, bar_min=0, bar_max=100):
     value = extract_number(value_text)
     if value is None:
         return None
 
-    value = max(0, min(100, value))
+    try:
+        bar_min = float(bar_min)
+        bar_max = float(bar_max)
+    except Exception:
+        bar_min = 0
+        bar_max = 100
+
+    if bar_max == bar_min:
+        return None
+
+    percent = (value - bar_min) / (bar_max - bar_min) * 100
+    return max(0, min(100, percent))
+
+def progress_bar(value_text, width, style="bar", bar_min=0, bar_max=100):
+    percent = scaled_percent(value_text, bar_min, bar_max)
+    if percent is None:
+        return None
+
     style = str(style or "bar").lower()
 
     if style == "percent":
-        prefix = f"{int(round(value))}% "
+        prefix = f"{int(round(percent))}% "
         bar_width = max(0, width - len(prefix))
-        filled = round(value / 100 * bar_width)
+        filled = round(percent / 100 * bar_width)
         bar = "#" * filled + "-" * (bar_width - filled)
         return (prefix + bar)[:width]
 
-    filled = round(value / 100 * width)
-    return ("#" * filled + "-" * (width - filled))[:width]
+    if style == "needle":
+        pos = round(percent / 100 * (width - 1))
+        chars = ["-"] * width
+        chars[pos] = "|"
+        return "".join(chars)
 
+    filled = round(percent / 100 * width)
+    return ("#" * filled + "-" * (width - filled))[:width]
 class HA:
     def __init__(self):
         token = os.environ.get("SUPERVISOR_TOKEN", "")
@@ -186,7 +208,14 @@ def render(ha, screen, width, scroll_step):
         value = format_value(state, unit, screen.get("decimals"))
 
     if bool(screen.get("progressbar", False)):
-        bar = progress_bar(value, width, screen.get("bar_style", "bar"))
+        bar = progress_bar(
+            value,
+            width,
+            screen.get("bar_style", "bar"),
+            screen.get("bar_min", 0),
+            screen.get("bar_max", 100),
+        )
+
         if bar:
             return title, bar
 
