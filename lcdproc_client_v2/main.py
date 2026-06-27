@@ -115,6 +115,7 @@ class LCD:
         self.send("screen_add main")
         self.send("screen_set main name {HA LCD V2}")
         self.send("screen_set main heartbeat off")
+        self.send("screen_set main priority foreground")
         self.send("widget_add main title title")
         self.send("widget_add main line1 string")
         self.send("widget_add main line2 string")
