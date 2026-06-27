@@ -34,6 +34,7 @@ options:
       entity: "sensor.alfa_clima_outside_temperature"
       decimals: 2
       progressbar: false
+      scroll: true
 schema:
   lcdproc_host: str
   lcdproc_port: port
@@ -48,5 +49,6 @@ schema:
       decimals: int?
       unit: str?
       progressbar: bool?
-      bar_style: str?
       scroll: bool?
+      bar_style: str?
+
