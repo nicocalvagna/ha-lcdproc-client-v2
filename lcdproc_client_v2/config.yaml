@@ -43,13 +43,13 @@ schema:
   rotation_seconds: int
   refresh_seconds: int
   debug: bool
-  screens:
-    - name: str
-      entity: str
-      decimals: int?
-      unit: str?
-      progressbar: bool?
-      scroll: bool?
-      bar_style: str?
-      bar_min: float?
-      bar_max: float?
+screens:
+  - name: str
+    entity: str
+    decimals: int?
+    unit: str?
+    progressbar: bool?
+    bar_style: list(bar|percent|needle)?
+    bar_min: float?
+    bar_max: float?
+    scroll: bool?   
