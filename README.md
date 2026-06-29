@@ -1,23 +1,39 @@
-# HA LCDproc Client V2
+# HA Display Hub Client
 
-Modern LCDproc client add-on for Home Assistant.
+Home Assistant add-on that sends entity values to one or more Display Hub servers.
 
-## Basic configuration
+## Features
+
+- Multiple displays
+- Multiple screens per display
+- Automatic rotation
+- Scrolling text
+- Progress bars
+- Needle bars
+- Native Home Assistant API
+- TCP/JSON protocol
+
+## Example configuration
 
 ```yaml
-lcdproc_host: "192.168.88.206"
-lcdproc_port: 13666
-lcd_width: 16
-lcd_height: 2
-rotation_seconds: 5
-refresh_seconds: 2
-debug: false
+displayhub_host: "192.168.88.108"
+displayhub_port: 4510
+
 screens:
-  - name: "Cisterna"
-    entity: "sensor.nivel_cisterna"
-    decimals: 0
+  - display: rack1
+    name: Exterior
+    entity: sensor.alfa_clima_outside_temperature
+    decimals: 1
+
+  - display: rack2
+    name: Cisterna
+    entity: sensor.nivel_cisterna
     progressbar: true
-  - name: "Exterior"
-    entity: "sensor.alfa_clima_outside_temperature"
-    decimals: 2
+    bar_style: percent
+    bar_min: 0
+    bar_max: 100
 ```
+
+## Requires
+
+- HA Display Hub Server
