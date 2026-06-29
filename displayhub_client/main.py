@@ -155,6 +155,7 @@ class DisplayHub:
 def render(ha, screen, width, scroll_step):
     entity = str(screen.get("entity", "")).strip()
     title = str(screen.get("name") or entity).strip()
+    widget = str(screen.get("widget", "value")).lower().strip()
 
     if bool(screen.get("scroll", False)):
         title = scroll_text(title, width, scroll_step)
@@ -175,6 +176,30 @@ def render(ha, screen, width, scroll_step):
             unit = attrs.get("unit_of_measurement", "") or ""
         value = format_value(state, unit, screen.get("decimals"))
 
+    if widget == "temperature":
+        return fit_left(title, width), fit_center(value, width)
+
+    if widget == "percent_bar":
+        bar = progress_bar(
+            value,
+            width,
+            "percent",
+            screen.get("bar_min", 0),
+            screen.get("bar_max", 100),
+        )
+        return fit_left(title, width), fit_center(bar or value, width)
+
+    if widget == "needle":
+        bar = progress_bar(
+            value,
+            width,
+            "needle",
+            screen.get("bar_min", 0),
+            screen.get("bar_max", 100),
+        )
+        return fit_left(title, width), fit_center(bar or value, width)
+
+    # Compatibilidad con configuración anterior
     if bool(screen.get("progressbar", False)):
         bar = progress_bar(
             value,
@@ -187,7 +212,6 @@ def render(ha, screen, width, scroll_step):
             value = bar
 
     return fit_left(title, width), fit_center(value, width)
-
 def main():
     cfg = load_config()
 

@@ -49,6 +49,7 @@ schema:
   screens:
     - name: str
       display: str
+      widget: str
       entity: str
       decimals: int?
       unit: str?
