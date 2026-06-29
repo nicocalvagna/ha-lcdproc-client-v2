@@ -152,17 +152,10 @@ class DisplayHub:
         except Exception:
             return False
 
-def render(ha, screen, width, scroll_step):
-    entity = str(screen.get("entity", "")).strip()
-    title = str(screen.get("name") or entity).strip()
-    widget = str(screen.get("widget", "value")).lower().strip()
-
-    if bool(screen.get("scroll", False)):
-        title = scroll_text(title, width, scroll_step)
-
+def entity_value(ha, entity, screen):
     ok, data, err = ha.get_entity(entity)
     if not ok:
-        return fit_left(title, width), fit_center(err, width)
+        return False, err
 
     attrs = data.get("attributes", {}) or {}
     state = data.get("state", "")
@@ -176,10 +169,27 @@ def render(ha, screen, width, scroll_step):
             unit = attrs.get("unit_of_measurement", "") or ""
         value = format_value(state, unit, screen.get("decimals"))
 
-    if widget == "temperature":
+    return True, value
+
+
+def render(ha, screen, width, scroll_step):
+    entity = str(screen.get("entity", "")).strip()
+    entity2 = str(screen.get("entity2", "")).strip()
+    title = str(screen.get("name") or entity).strip()
+
+    layout = str(screen.get("layout") or screen.get("widget") or "value").lower().strip()
+
+    if bool(screen.get("scroll", False)):
+        title = scroll_text(title, width, scroll_step)
+
+    ok, value = entity_value(ha, entity, screen)
+    if not ok:
         return fit_left(title, width), fit_center(value, width)
 
-    if widget == "percent_bar":
+    if layout in ("temperature", "value"):
+        return fit_left(title, width), fit_center(value, width)
+
+    if layout in ("percent_bar", "bar"):
         bar = progress_bar(
             value,
             width,
@@ -189,7 +199,7 @@ def render(ha, screen, width, scroll_step):
         )
         return fit_left(title, width), fit_center(bar or value, width)
 
-    if widget == "needle":
+    if layout in ("gauge", "needle"):
         bar = progress_bar(
             value,
             width,
@@ -199,7 +209,20 @@ def render(ha, screen, width, scroll_step):
         )
         return fit_left(title, width), fit_center(bar or value, width)
 
-    # Compatibilidad con configuración anterior
+    if layout == "dual_value":
+        if not entity2:
+            return fit_left(title, width), fit_center("entity2 falta", width)
+
+        ok2, value2 = entity_value(ha, entity2, screen)
+        if not ok2:
+            value2 = value2[:width]
+
+        line1 = f"{title} {value}"
+        line2 = value2
+
+        return fit_left(line1, width), fit_left(line2, width)
+
+    # Compatibilidad con config vieja
     if bool(screen.get("progressbar", False)):
         bar = progress_bar(
             value,

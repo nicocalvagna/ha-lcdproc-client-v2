@@ -22,22 +22,29 @@ options:
   rotation_seconds: 5
   refresh_seconds: 2
   debug: false
-  screens:
-  - name: "Exterior"
-    display: "rack1"
-    entity: "sensor.alfa_clima_outside_temperature"
-    decimals: 1
-    progressbar: false
-    scroll: true
 
-  - name: "Cisterna"
-    display: "rack2"
-    entity: "sensor.nivel_cisterna"
-    decimals: 0
-    progressbar: true
-    bar_style: "percent"
-    bar_min: "0"
-    bar_max: "100"
+- display: rack1
+  layout: value
+  name: Exterior
+  entity: sensor.alfa_clima_outside_temperature
+  decimals: 1
+  scroll: true
+
+- display: rack2
+  layout: percent_bar
+  name: Cisterna
+  entity: sensor.nivel_cisterna
+  decimals: 0
+  bar_min: "0"
+  bar_max: "100"
+
+- display: rack1
+  layout: dual_value
+  name: Clima
+  entity: sensor.alfa_clima_outside_temperature
+  entity2: sensor.alfa_clima_humidity
+  decimals: 1
+
 schema:
   displayhub_host: str
   displayhub_port: port
@@ -46,15 +53,17 @@ schema:
   rotation_seconds: int
   refresh_seconds: int
   debug: bool
-  screens:
-    - name: str
-      display: str
-      widget: str
-      entity: str
-      decimals: int?
-      unit: str?
-      progressbar: bool?
-      bar_style: str?
-      bar_min: str?
-      bar_max: str?
-      scroll: bool?
+screens:
+  - name: str
+    display: str
+    layout: str?
+    widget: str?
+    entity: str
+    entity2: str?
+    decimals: int?
+    unit: str?
+    progressbar: bool?
+    bar_style: str?
+    bar_min: str?
+    bar_max: str?
+    scroll: bool?
